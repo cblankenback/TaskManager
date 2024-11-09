@@ -12,6 +12,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "TASKUPDATE")
 public class TaskUpdate {
 

@@ -5,7 +5,6 @@ import com.example.taskmanager.dto.TaskResponseDTO;
 import com.example.taskmanager.entity.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {

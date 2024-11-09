@@ -10,6 +10,8 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "PRIORITY")
 
 public class Priority {
@@ -19,7 +21,10 @@ public class Priority {
     @Column(name = "PRIORITY_ID", nullable = false)
     private Integer priorityId;
      
-    @Setter
+   
     @Column(name = "TYPE", nullable = false, length = 45)
     private String type;
+
+
+	
 }

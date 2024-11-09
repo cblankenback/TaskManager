@@ -209,7 +209,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TaskManager`.`notification` (
   `NOTIFICATION_ID` INT NOT NULL AUTO_INCREMENT,
-  `MESSAGE` VARCHAR(45) NOT NULL,
+  `MESSAGE` VARCHAR(500) NOT NULL,
   `TASK_ID` INT NULL,
   PRIMARY KEY (`NOTIFICATION_ID`),
   INDEX `fk_NOTIFICATION_TASK1_idx` (`TASK_ID` ASC) VISIBLE,
@@ -298,19 +298,21 @@ INSERT INTO `EMPLOYEE` (`FIRST_NAME`, `LAST_NAME`, `PASSWORD`, `DEPARTMENT_ID`, 
 ('Charlie', 'Davis', '$2b$12$k5L7N9p1R3T5V7xA9D0Eu00OZzP1Sn8uYq2T3wXu6FhN1Y2sK3Qr', 4, 3, 2);
 
 -- Verify DEPARTMENT entries
-SELECT * FROM `DEPARTMENT`;
+SELECT * FROM `department`;
 
 -- Verify ROLE entries
-SELECT * FROM `ROLE`;
+SELECT * FROM `role`;
 
 -- Verify AVAILABILITY entries
-SELECT * FROM `AVAILABILITY`;
+SELECT * FROM `availability`;
 
 -- Verify STATUS entries
-SELECT * FROM `STATUS`;
+SELECT * FROM `status`;
 
 -- Verify PRIORITY entries
-SELECT * FROM `PRIORITY`;
+SELECT * FROM `priority`;
 
 -- Verify EMPLOYEE entries
-SELECT * FROM `EMPLOYEE`;
+SELECT * FROM `employee`;
+
+

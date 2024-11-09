@@ -11,10 +11,14 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "COMMENT")
 public class Comment {
 
-    @Id
+    
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMMENT_ID", nullable = false)
     private Integer commentId;

@@ -18,6 +18,8 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "TASK")
 
 public class Task {
@@ -76,4 +78,6 @@ public class Task {
         this.creationDate = LocalDateTime.now();
         System.out.println("Task creationDate set to: " + this.creationDate);
     }
+
+	
 }

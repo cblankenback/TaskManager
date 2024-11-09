@@ -25,4 +25,8 @@ public class TaskRequestDTO {
     private Integer createdById;
 
     private Integer priorityId; // Optional
+
+    private Integer statusId; // Add this field if required
+
+    private Integer assignedEmployeeId; // Add this field if required
 }

@@ -1,6 +1,7 @@
 package com.example.taskmanager.entity;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import lombok.*;
 
 @Entity
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @ToString
 @Table(name = "DEPARTMENT")

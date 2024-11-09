@@ -10,6 +10,8 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "ROLE")
 
 public class Role {

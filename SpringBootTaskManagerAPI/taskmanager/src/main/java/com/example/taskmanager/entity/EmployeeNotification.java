@@ -13,6 +13,8 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "EMPLOYEENOTIFICATION")
 public class EmployeeNotification {
 

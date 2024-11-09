@@ -13,6 +13,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "NOTIFICATION")
 public class Notification {
 
@@ -21,7 +23,7 @@ public class Notification {
     @Column(name = "NOTIFICATION_ID", nullable = false)
     private Integer notificationId;
 
-    @Column(name = "MESSAGE", nullable = false, length = 45)
+    @Column(name = "MESSAGE", nullable = false, length = 500)
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)

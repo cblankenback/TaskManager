@@ -14,6 +14,8 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "AVAILABILITY")
 public class Availability {
 
