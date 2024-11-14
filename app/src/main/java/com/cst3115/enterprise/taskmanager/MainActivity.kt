@@ -1,47 +1,55 @@
 package com.cst3115.enterprise.taskmanager
 
+
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.*
+import androidx.navigation.compose.rememberNavController
+import com.cst3115.enterprise.taskmanager.ui.screens.CreateAccountScreen
+import com.cst3115.enterprise.taskmanager.ui.screens.EditUserDetailsScreen
+import com.cst3115.enterprise.taskmanager.ui.screens.MainScreen
 import com.cst3115.enterprise.taskmanager.ui.theme.TaskManagerTheme
+import com.cst3115.enterprise.taskmanager.ui.viewmodel.UserViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             TaskManagerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppNavigation()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TaskManagerTheme {
-        Greeting("Android")
+fun AppNavigation() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(navController)
+        }
+        composable("main") {
+            val userViewModel: UserViewModel = viewModel()
+            MainScreen(navController, userViewModel)
+        }
+        composable("create_account") {
+            CreateAccountScreen(navController)
+        }
+        composable("user_details") {
+            // Pass the navController and UserViewModel to UserDetailsScreen
+            val userViewModel: UserViewModel = viewModel()
+            UserDetailsScreen(navController, userViewModel)
+        }
+        composable("edit_user_details") {
+            val userViewModel: UserViewModel = viewModel()
+            EditUserDetailsScreen(navController, userViewModel)
+        }
     }
 }

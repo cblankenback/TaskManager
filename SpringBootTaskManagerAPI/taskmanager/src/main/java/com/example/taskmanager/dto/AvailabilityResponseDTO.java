@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class AvailabilityResponseDTO {
-	private Integer availabilityNameId;
-	private String availabilityNameName;
+	private Integer availabilityId;
+	private String availabilityName;
 }

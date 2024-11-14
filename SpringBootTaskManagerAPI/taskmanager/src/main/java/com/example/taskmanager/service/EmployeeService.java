@@ -46,7 +46,10 @@ public class EmployeeService {
     // Create a new employee
     @Transactional
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO requestDTO) {
-
+    	if (employeeRepository.findByUsername(requestDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already taken");
+        }
+    	
         // Validate that password is provided
         if (requestDTO.getPassword() == null || requestDTO.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Password is required when creating an employee");
@@ -54,6 +57,8 @@ public class EmployeeService {
 
         Employee employee = employeeMapper.toEntity(requestDTO);
 
+    	
+    	employee.setUsername(requestDTO.getUsername());
         // Encode password
         String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
         employee.setPassword(encodedPassword);
@@ -72,7 +77,8 @@ public class EmployeeService {
         Role role = roleRepository.findById(requestDTO.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + requestDTO.getRoleId()));
         employee.setRole(role);
-
+        
+        
         Employee savedEmployee = employeeRepository.save(employee);
 
         return employeeMapper.toDTO(savedEmployee);
@@ -92,6 +98,18 @@ public class EmployeeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with ID: " + id));
 
         return employeeMapper.toDTO(employee);
+    }
+    
+    public EmployeeResponseDTO convertToResponseDTO(Employee employee) {
+        EmployeeResponseDTO dto = new EmployeeResponseDTO();
+        dto.setEmployeeId(employee.getEmployeeId());
+        dto.setUsername(employee.getUsername());
+        dto.setFirstName(employee.getFirstName());
+        dto.setLastName(employee.getLastName());
+        dto.setDepartmentId(employee.getDepartment().getDepartmentId());
+        dto.setAvailabilityId(employee.getAvailability().getAvailabilityId());
+        dto.setRoleId(employee.getRole().getRoleId());
+        return dto;
     }
 
     // Update an existing employee

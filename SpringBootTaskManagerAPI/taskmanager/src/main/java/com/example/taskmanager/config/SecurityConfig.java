@@ -1,23 +1,33 @@
 package com.example.taskmanager.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.example.taskmanager.security.JwtAuthenticationFilter;
+import com.example.taskmanager.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.*;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.*;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     /**
      * Defines the password encoder bean using BCrypt.
-     *
-     * @return PasswordEncoder instance.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -25,47 +35,45 @@ public class SecurityConfig {
     }
 
     /**
-     * Defines the in-memory user details service with a default admin user.
-     *
-     * @param passwordEncoder PasswordEncoder to encode the password.
-     * @return UserDetailsService instance.
+     * Authentication provider using the custom UserDetailsService.
      */
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("adminpassword"))
-                .roles("ADMIN")
-                .build();
-
-        // You can define more users here if needed
-
-        return new InMemoryUserDetailsManager(admin);
+    public DaoAuthenticationProvider authenticationProvider() {
+        var authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
     /**
      * Configures the security filter chain.
-     *
-     * @param http HttpSecurity instance.
-     * @return SecurityFilterChain.
-     * @throws Exception if an error occurs.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF for simplicity; enable it in production
+            // Disable CSRF since tokens are immune to it
             .csrf(csrf -> csrf.disable())
-            
-            // Authorize requests
+            // Set session management to stateless
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Configure URL authorization
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Secure admin endpoints
-                .requestMatchers("/api/**").authenticated()        // Secure all API endpoints
-                .anyRequest().permitAll()                           // Allow other requests
+                .requestMatchers("/api/auth/**").permitAll() 
+                .requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
+                .requestMatchers("/api/departments/**").permitAll() // Allow public access
+                .requestMatchers("/api/availabilities/**").permitAll() // Allow public access
+                .requestMatchers("/api/roles/**").permitAll() // Allow public access// Allow authentication endpoints
+                .anyRequest().authenticated() // Secure all other endpoints
             )
-            
-            // Enable HTTP Basic Authentication
-            .httpBasic(Customizer.withDefaults());
-        
+            // Add authentication provider
+            .authenticationProvider(authenticationProvider())
+            // Add JWT filter
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
 }
