@@ -15,5 +15,6 @@ public class TaskResponseDTO {
     private Integer dependencyTaskId; // Optional
     private Integer createdById;
     private Integer priorityId; // Optional
+    private String address;
 }
 

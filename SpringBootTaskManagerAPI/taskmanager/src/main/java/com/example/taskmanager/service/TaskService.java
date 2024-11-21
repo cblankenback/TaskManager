@@ -109,6 +109,7 @@ public class TaskService {
         existingTask.setTaskName(taskRequestDTO.getTaskName());
         existingTask.setDescription(taskRequestDTO.getDescription());
         existingTask.setDeadline(taskRequestDTO.getDeadline());
+        existingTask.setAddress(taskRequestDTO.getAddress());
 
         // Update Priority if provided
         if (taskRequestDTO.getPriorityId() != null) {

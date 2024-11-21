@@ -44,6 +44,9 @@ public class Task {
   
     @Column(name = "CREATION_DATE" , nullable = false, updatable = false)
     private LocalDateTime creationDate;
+    
+    @Column(name = "ADDRESS" , nullable = false, updatable = false)
+    private String address;
 
    
     @Column(name = "ARCHIVED", nullable = false)

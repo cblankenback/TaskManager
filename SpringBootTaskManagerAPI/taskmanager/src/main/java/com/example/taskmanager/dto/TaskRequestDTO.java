@@ -18,6 +18,9 @@ public class TaskRequestDTO {
 
     @NotNull(message = "Deadline is required")
     private LocalDateTime deadline;
+    
+    @NotNull(message = "Address is required")
+    private String address;
 
     private Integer dependencyTaskId; // Optional
 
