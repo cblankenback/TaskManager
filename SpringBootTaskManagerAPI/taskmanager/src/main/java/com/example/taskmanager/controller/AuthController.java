@@ -7,6 +7,7 @@ import com.example.taskmanager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -25,20 +26,17 @@ public class AuthController {
     private EmployeeService employeeService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequest) {
-        try {
-            var authentication = authenticationManager.authenticate(
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequest){
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    authRequest.getUsername(), authRequest.getPassword()));
+                        authRequest.getUsername(), authRequest.getPassword()));
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String token = jwtTokenUtil.generateToken(userDetails);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String token = jwtTokenUtil.generateToken(userDetails);
 
-            return ResponseEntity.ok(new AuthResponseDTO(token));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return ResponseEntity.ok(new AuthResponseDTO(token));
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<EmployeeResponseDTO> register(@RequestBody EmployeeRequestDTO requestDTO) {
