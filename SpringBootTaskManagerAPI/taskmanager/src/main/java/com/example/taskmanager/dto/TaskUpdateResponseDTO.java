@@ -9,7 +9,7 @@ public class TaskUpdateResponseDTO {
     private Integer taskUpdateId;
     private LocalDateTime updateDate;
     private Integer taskId;
-    private Integer commentId;
+    private String comment;
     private Integer statusId;
     private Integer employeeId;
 }

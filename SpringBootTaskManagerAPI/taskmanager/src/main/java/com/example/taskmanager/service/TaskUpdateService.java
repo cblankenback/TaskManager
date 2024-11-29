@@ -4,14 +4,12 @@ import com.example.taskmanager.dto.TaskUpdateRequestDTO;
 import com.example.taskmanager.dto.TaskUpdateResponseDTO;
 import com.example.taskmanager.entity.TaskUpdate;
 import com.example.taskmanager.entity.Task;
-import com.example.taskmanager.entity.Comment;
 import com.example.taskmanager.entity.Status;
 import com.example.taskmanager.entity.Employee;
 import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.mapper.TaskUpdateMapper;
 import com.example.taskmanager.repository.EmployeeRepository;
 import com.example.taskmanager.repository.TaskRepository;
-import com.example.taskmanager.repository.CommentRepository;
 import com.example.taskmanager.repository.StatusRepository;
 import com.example.taskmanager.repository.TaskUpdateRepository;
 
@@ -32,20 +30,17 @@ public class TaskUpdateService {
     private final TaskUpdateRepository taskUpdateRepository;
     private final TaskUpdateMapper taskUpdateMapper;
     private final TaskRepository taskRepository;
-    private final CommentRepository commentRepository;
     private final StatusRepository statusRepository;
     private final EmployeeRepository employeeRepository;
 
     public TaskUpdateService(TaskUpdateRepository taskUpdateRepository,
                              TaskUpdateMapper taskUpdateMapper,
                              TaskRepository taskRepository,
-                             CommentRepository commentRepository,
                              StatusRepository statusRepository,
                              EmployeeRepository employeeRepository) {
         this.taskUpdateRepository = taskUpdateRepository;
         this.taskUpdateMapper = taskUpdateMapper;
         this.taskRepository = taskRepository;
-        this.commentRepository = commentRepository;
         this.statusRepository = statusRepository;
         this.employeeRepository = employeeRepository;
     }
@@ -86,15 +81,13 @@ public class TaskUpdateService {
         taskUpdate.setTask(task);
         logger.debug("Set Task: {}", task);
 
-        // Fetch and set Comment if provided
-        if (requestDTO.getCommentId() != null) {
-            Comment comment = commentRepository.findById(requestDTO.getCommentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Comment not found with ID: " + requestDTO.getCommentId()));
-            taskUpdate.setComment(comment);
-            logger.debug("Set Comment: {}", comment);
+        // Set Comment if provided
+        if (requestDTO.getComment() != null && !requestDTO.getComment().isEmpty()) {
+            taskUpdate.setComment(requestDTO.getComment());
+            logger.debug("Set Comment: {}", requestDTO.getComment());
         } else {
             taskUpdate.setComment(null);
-            logger.debug("No Comment ID provided; set Comment to null");
+            logger.debug("No Comment provided; set Comment to null");
         }
 
         // Fetch and set Status
@@ -137,17 +130,13 @@ public class TaskUpdateService {
             logger.debug("Updated Task to: {}", newTask);
         }
 
-        // Update Comment if commentId has changed
-        if (requestDTO.getCommentId() != null) {
-            if (existingTaskUpdate.getComment() == null || !existingTaskUpdate.getComment().getCommentId().equals(requestDTO.getCommentId())) {
-                Comment newComment = commentRepository.findById(requestDTO.getCommentId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Comment not found with ID: " + requestDTO.getCommentId()));
-                existingTaskUpdate.setComment(newComment);
-                logger.debug("Updated Comment to: {}", newComment);
-            }
-        } else {
+        // Update Comment
+        if (requestDTO.getComment() != null && !requestDTO.getComment().equals(existingTaskUpdate.getComment())) {
+            existingTaskUpdate.setComment(requestDTO.getComment());
+            logger.debug("Updated Comment to: {}", requestDTO.getComment());
+        } else if (requestDTO.getComment() == null || requestDTO.getComment().isEmpty()) {
             existingTaskUpdate.setComment(null);
-            logger.debug("No Comment ID provided; set Comment to null");
+            logger.debug("No Comment provided; set Comment to null");
         }
 
         // Update Status if statusId has changed

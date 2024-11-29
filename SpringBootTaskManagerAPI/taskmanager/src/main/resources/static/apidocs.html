@@ -1,0 +1,2108 @@
+<!-- src/main/resources/templates/apidocs.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Documentation - Task Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        h2 { color: #555; }
+        h3 { color: #666; }
+        pre { background: #f4f4f4; padding: 10px; }
+        code { background: #f4f4f4; padding: 2px 4px; }
+        .endpoint { margin-bottom: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { text-align: left; padding: 8px; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        ul { list-style-type: disc; margin-left: 20px; }
+        .auth-note { color: #d9534f; }
+        a { text-decoration: none; color: #337ab7; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Task Manager API Documentation</h1>
+
+    <p>Welcome to the API documentation for the Task Manager application. Below you'll find details on how to use each endpoint, including URLs, HTTP methods, request and response examples, and authentication requirements.</p>
+
+    <h2>Table of Contents</h2>
+    <ul>
+        <li><a href="#auth">Authentication</a></li>
+        <li><a href="#availabilities">Availabilities</a></li>
+        <li><a href="#departments">Departments</a></li>
+        <li><a href="#tasks">Tasks</a></li>
+        <li><a href="#taskupdates">Task Updates</a></li>
+        <li><a href="#employees">Employees</a></li>
+        <li><a href="#employeenotifications">Employee Notifications</a></li>
+        <li><a href="#notifications">Notifications</a></li>
+        <li><a href="#priorities">Priorities</a></li>
+        <li><a href="#roles">Roles</a></li>
+        <li><a href="#statuses">Statuses</a></li>
+    </ul>
+
+    <!-- Authentication -->
+    <div class="endpoint" id="auth">
+        <h2>Authentication</h2>
+        <p>The authentication endpoints allow users to register and log in to the system. These endpoints do not require authentication.</p>
+
+        <!-- Register -->
+        <h3>User Registration</h3>
+        <p><strong>Endpoint:</strong> <code>/api/auth/register</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Registers a new user in the system.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>EmployeeRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "cst31155",
+    "lastName": "3115",
+    "username": "christian",
+    "password": "3115",
+    "departmentId": 1,
+    "availabilityId": 1,
+    "roleId": 1
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "employeeId": 7,
+    "username": "christian",
+    "firstName": "cst31155",
+    "lastName": "3115",
+    "departmentId": 1,
+    "availabilityId": 1,
+    "roleId": 1
+}
+        </pre>
+
+        <!-- Login -->
+        <h3>User Login</h3>
+        <p><strong>Endpoint:</strong> <code>/api/auth/login</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Authenticates a user and returns a JWT token.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>AuthRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "christian",
+    "password": "3115"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjaHJpc3RpYW4iLCJpYXQiOjE3MzI4NDk0NTYsImV4cCI6MTczMjkzNTg1Nn0.pIARO-UOpl7uwX4hH1cQ0vYsuQtVyZrLPGEuwbc8xXQ"
+}
+        </pre>
+        <p><strong>Note:</strong> Include this token in the <code>Authorization</code> header for authenticated requests:</p>
+        <pre>
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+        </pre>
+    </div>
+
+    <!-- Availabilities -->
+    <div class="endpoint" id="availabilities">
+        <h2>Availabilities</h2>
+        <p>The availability endpoints manage the availability statuses of employees. These endpoints do not require authentication.</p>
+
+        <!-- Get All Availabilities -->
+        <h3>Retrieve All Availabilities</h3>
+        <p><strong>Endpoint:</strong> <code>/api/availabilities</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a list of all availability statuses.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/availabilities
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "availabilityId": 1,
+        "availabilityName": "Available"
+    },
+    {
+        "availabilityId": 2,
+        "availabilityName": "Busy"
+    },
+    {
+        "availabilityId": 3,
+        "availabilityName": "On Leave"
+    }
+]
+        </pre>
+
+        <!-- Get Availability by ID -->
+        <h3>Retrieve Availability by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/availabilities/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific availability status by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/availabilities/1
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "availabilityId": 1,
+    "availabilityName": "Available"
+}
+        </pre>
+
+        <!-- Create a New Availability -->
+        <h3>Create a New Availability</h3>
+        <p><strong>Endpoint:</strong> <code>/api/availabilities</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new availability status.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>AvailabilityRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/availabilities
+Content-Type: application/json
+
+{
+    "availabilityName": "In Meeting"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "availabilityId": 4,
+    "availabilityName": "In Meeting"
+}
+        </pre>
+
+        <!-- Update an Existing Availability -->
+        <h3>Update an Existing Availability</h3>
+        <p><strong>Endpoint:</strong> <code>/api/availabilities/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing availability status.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>AvailabilityRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/availabilities/1
+Content-Type: application/json
+
+{
+    "availabilityName": "Available for Calls"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "availabilityId": 1,
+    "availabilityName": "Available for Calls"
+}
+        </pre>
+
+        <!-- Delete an Availability -->
+        <h3>Delete an Availability</h3>
+        <p><strong>Endpoint:</strong> <code>/api/availabilities/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes an availability status by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/availabilities/4
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Departments -->
+    <div class="endpoint" id="departments">
+        <h2>Departments</h2>
+        <p>The department endpoints manage departments within the organization. These endpoints do not require authentication.</p>
+
+        <!-- Get All Departments -->
+        <h3>Retrieve All Departments</h3>
+        <p><strong>Endpoint:</strong> <code>/api/departments</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a list of all departments.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/departments
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "departmentId": 1,
+        "departmentName": "Human Resources"
+    },
+    {
+        "departmentId": 2,
+        "departmentName": "Engineering"
+    },
+    {
+        "departmentId": 3,
+        "departmentName": "Marketing"
+    }
+]
+        </pre>
+
+        <!-- Get Department by ID -->
+        <h3>Retrieve Department by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/departments/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific department by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/departments/1
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "departmentId": 1,
+    "departmentName": "Human Resources"
+}
+        </pre>
+
+        <!-- Create a New Department -->
+        <h3>Create a New Department</h3>
+        <p><strong>Endpoint:</strong> <code>/api/departments</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new department.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>DepartmentRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/departments
+Content-Type: application/json
+
+{
+    "departmentName": "Research and Development"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "departmentId": 4,
+    "departmentName": "Research and Development"
+}
+        </pre>
+
+        <!-- Update an Existing Department -->
+        <h3>Update an Existing Department</h3>
+        <p><strong>Endpoint:</strong> <code>/api/departments/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing department.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>DepartmentRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/departments/1
+Content-Type: application/json
+
+{
+    "departmentName": "Engineering and Development"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "departmentId": 1,
+    "departmentName": "Engineering and Development"
+}
+        </pre>
+
+        <!-- Delete a Department -->
+        <h3>Delete a Department</h3>
+        <p><strong>Endpoint:</strong> <code>/api/departments/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a department by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/departments/4
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Tasks -->
+    <div class="endpoint" id="tasks">
+        <h2>Tasks</h2>
+        <p>The task endpoints manage tasks within the system. These endpoints require authentication.</p>
+
+        <!-- Get All Tasks -->
+        <h3>Retrieve All Tasks</h3>
+        <p><strong>Endpoint:</strong> <code>/api/tasks</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a list of all tasks.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/tasks
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "taskId": 1,
+        "taskName": "Design Database Schema",
+        "description": "Create the initial database schema for the project.",
+        "deadline": "2023-12-31T23:59:59",
+        "creationDate": "2024-11-28T21:32:44",
+        "archived": false,
+        "dependencyTaskId": null,
+        "createdById": 1,
+        "priorityId": 2,
+        "address": "123 Main St, City, Country"
+    }
+]
+        </pre>
+
+        <!-- Get Task by ID -->
+        <h3>Retrieve Task by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/tasks/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific task by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/tasks/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "taskName": "Design Database Schema",
+    "description": "Create the initial database schema for the project.",
+    "deadline": "2023-12-31T23:59:59",
+    "creationDate": "2024-11-28T21:32:44",
+    "archived": false,
+    "dependencyTaskId": null,
+    "createdById": 1,
+    "priorityId": 2,
+    "address": "123 Main St, City, Country"
+}
+        </pre>
+
+        <!-- Create a New Task -->
+        <h3>Create a New Task</h3>
+        <p><strong>Endpoint:</strong> <code>/api/tasks</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new task.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>TaskRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/tasks
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskName": "Develop API Endpoints",
+    "description": "Implement RESTful APIs for the application.",
+    "deadline": "2023-11-30T17:00:00",
+    "address": "456 Elm St, City, Country",
+    "createdById": 1,
+    "priorityId": 1
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "taskId": 2,
+    "taskName": "Develop API Endpoints",
+    "description": "Implement RESTful APIs for the application.",
+    "deadline": "2023-11-30T17:00:00",
+    "creationDate": "2024-11-28T22:00:00",
+    "archived": false,
+    "dependencyTaskId": null,
+    "createdById": 1,
+    "priorityId": 1,
+    "address": "456 Elm St, City, Country"
+}
+        </pre>
+
+        <!-- Update an Existing Task -->
+        <h3>Update an Existing Task</h3>
+        <p><strong>Endpoint:</strong> <code>/api/tasks/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing task.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>TaskRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/tasks/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskName": "Develop API Endpoints",
+    "description": "Implement and test RESTful APIs.",
+    "deadline": "2023-12-15T17:00:00",
+    "address": "456 Elm St, City, Country",
+    "createdById": 1,
+    "priorityId": 1
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "taskName": "Develop API Endpoints",
+    "description": "Implement and test RESTful APIs.",
+    "deadline": "2023-12-15T17:00:00",
+    "creationDate": "2024-11-28T21:32:44",
+    "archived": false,
+    "dependencyTaskId": null,
+    "createdById": 1,
+    "priorityId": 1,
+    "address": "456 Elm St, City, Country"
+}
+        </pre>
+
+        <!-- Delete a Task -->
+        <h3>Delete a Task</h3>
+        <p><strong>Endpoint:</strong> <code>/api/tasks/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a task by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/tasks/2
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Task Updates -->
+    <div class="endpoint" id="taskupdates">
+        <h2>Task Updates</h2>
+        <p>The task update endpoints manage updates to tasks. These endpoints require authentication.</p>
+
+        <!-- Retrieve All Task Updates -->
+        <h3>Retrieve All Task Updates</h3>
+        <p><strong>Endpoint:</strong> <code>/api/taskupdates</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all task updates.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/taskupdates
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "taskUpdateId": 1,
+        "updateDate": "2024-11-28T21:35:00",
+        "taskId": 1,
+        "comment": "Started working on the task.",
+        "statusId": 2,
+        "employeeId": 3
+    }
+]
+        </pre>
+
+        <!-- Retrieve Task Update by ID -->
+        <h3>Retrieve Task Update by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/taskupdates/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific task update by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/taskupdates/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "taskUpdateId": 1,
+    "updateDate": "2024-11-28T21:35:00",
+    "taskId": 1,
+    "comment": "Started working on the task.",
+    "statusId": 2,
+    "employeeId": 3
+}
+        </pre>
+
+        <!-- Create a New Task Update -->
+        <h3>Create a New Task Update</h3>
+        <p><strong>Endpoint:</strong> <code>/api/taskupdates</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new task update.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>TaskUpdateRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/taskupdates
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "comment": "Started working on the task.",
+    "statusId": 2,
+    "employeeId": 3
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "taskUpdateId": 2,
+    "updateDate": "2024-11-28T22:10:00",
+    "taskId": 1,
+    "comment": "Started working on the task.",
+    "statusId": 2,
+    "employeeId": 3
+}
+        </pre>
+
+        <!-- Update an Existing Task Update -->
+        <h3>Update an Existing Task Update</h3>
+        <p><strong>Endpoint:</strong> <code>/api/taskupdates/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing task update.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>TaskUpdateRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/taskupdates/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "comment": "Completed the task.",
+    "statusId": 3,
+    "employeeId": 3
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "taskUpdateId": 1,
+    "updateDate": "2024-11-28T22:15:00",
+    "taskId": 1,
+    "comment": "Completed the task.",
+    "statusId": 3,
+    "employeeId": 3
+}
+        </pre>
+
+        <!-- Delete a Task Update -->
+        <h3>Delete a Task Update</h3>
+        <p><strong>Endpoint:</strong> <code>/api/taskupdates/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a task update by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/taskupdates/2
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Employees -->
+    <div class="endpoint" id="employees">
+        <h2>Employees</h2>
+        <p>The employee endpoints manage employee information within the system. These endpoints require authentication.</p>
+
+        <!-- Get All Employees -->
+        <h3>Retrieve All Employees</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employees</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a list of all employees.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/employees
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "employeeId": 1,
+        "username": "jdoe",
+        "firstName": "John",
+        "lastName": "Doe",
+        "departmentId": 1,
+        "availabilityId": 1,
+        "roleId": 2
+    },
+    {
+        "employeeId": 2,
+        "username": "asmith",
+        "firstName": "Alice",
+        "lastName": "Smith",
+        "departmentId": 2,
+        "availabilityId": 2,
+        "roleId": 3
+    }
+]
+        </pre>
+
+        <!-- Get Employee by ID -->
+        <h3>Retrieve Employee by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employees/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific employee by their ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/employees/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "employeeId": 1,
+    "username": "jdoe",
+    "firstName": "John",
+    "lastName": "Doe",
+    "departmentId": 1,
+    "availabilityId": 1,
+    "roleId": 2
+}
+        </pre>
+
+        <!-- Create a New Employee -->
+        <h3>Create a New Employee</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employees</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new employee.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>EmployeeRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/employees
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "username": "asmith",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "password": "password123",
+    "departmentId": 2,
+    "availabilityId": 2,
+    "roleId": 3
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "employeeId": 3,
+    "username": "asmith",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "departmentId": 2,
+    "availabilityId": 2,
+    "roleId": 3
+}
+        </pre>
+
+        
+        <!-- Delete an Employee -->
+        <h3>Delete an Employee</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employees/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes an employee by their ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/employees/3
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Employee Notifications -->
+    <div class="endpoint" id="employeenotifications">
+        <h2>Employee Notifications</h2>
+        <p>The employee notification endpoints manage notifications assigned to employees. These endpoints require authentication.</p>
+
+        <!-- Get All Employee Notifications -->
+        <h3>Retrieve All Employee Notifications</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employeenotifications</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all employee notifications.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/employeenotifications
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "employeeNotificationId": 1,
+        "isRead": false,
+        "received": "2023-11-28T15:30:00",
+        "notificationId": 1,
+        "employeeId": 2
+    }
+]
+        </pre>
+
+        <!-- Get Employee Notification by ID -->
+        <h3>Retrieve Employee Notification by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employeenotifications/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific employee notification by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/employeenotifications/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "employeeNotificationId": 1,
+    "isRead": false,
+    "received": "2023-11-28T15:30:00",
+    "notificationId": 1,
+    "employeeId": 2
+}
+        </pre>
+
+        <!-- Create a New Employee Notification -->
+        <h3>Create a New Employee Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employeenotifications</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new employee notification.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>EmployeeNotificationRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/employeenotifications
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "notificationId": 1,
+    "employeeId": 2,
+    "isRead": false,
+    "received": "2023-11-28T15:30:00"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "employeeNotificationId": 2,
+    "isRead": false,
+    "received": "2023-11-28T16:00:00",
+    "notificationId": 1,
+    "employeeId": 2
+}
+        </pre>
+
+        <!-- Update an Existing Employee Notification -->
+        <h3>Update an Existing Employee Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employeenotifications/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing employee notification.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>EmployeeNotificationRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/employeenotifications/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "notificationId": 1,
+    "employeeId": 2,
+    "isRead": true,
+    "received": "2023-11-28T15:30:00"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "employeeNotificationId": 1,
+    "isRead": true,
+    "received": "2023-11-28T15:30:00",
+    "notificationId": 1,
+    "employeeId": 2
+}
+        </pre>
+
+        <!-- Delete an Employee Notification -->
+        <h3>Delete an Employee Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/employeenotifications/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes an employee notification by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/employeenotifications/2
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Notifications -->
+    <div class="endpoint" id="notifications">
+        <h2>Notifications</h2>
+        <p>The notification endpoints manage notifications within the system. These endpoints require authentication.</p>
+
+        <!-- Get All Notifications -->
+        <h3>Retrieve All Notifications</h3>
+        <p><strong>Endpoint:</strong> <code>/api/notifications</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all notifications.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/notifications
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "notificationId": 1,
+        "taskId": 1,
+        "message": "You have been assigned a new task."
+    }
+]
+        </pre>
+
+        <!-- Get Notification by ID -->
+        <h3>Retrieve Notification by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/notifications/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific notification by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/notifications/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "notificationId": 1,
+    "taskId": 1,
+    "message": "You have been assigned a new task."
+}
+        </pre>
+
+        <!-- Create a New Notification -->
+        <h3>Create a New Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/notifications</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new notification.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>NotificationRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/notifications
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "message": "You have been assigned a new task."
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "notificationId": 2,
+    "taskId": 1,
+    "message": "Your task deadline is approaching."
+}
+        </pre>
+
+        <!-- Update an Existing Notification -->
+        <h3>Update an Existing Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/notifications/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing notification.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>NotificationRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/notifications/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "taskId": 1,
+    "message": "Your task deadline is approaching."
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "notificationId": 1,
+    "taskId": 1,
+    "message": "Your task deadline is approaching."
+}
+        </pre>
+
+        <!-- Delete a Notification -->
+        <h3>Delete a Notification</h3>
+        <p><strong>Endpoint:</strong> <code>/api/notifications/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a notification by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/notifications/2
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Priorities -->
+    <div class="endpoint" id="priorities">
+        <h2>Priorities</h2>
+        <p>The priority endpoints manage task priorities. These endpoints require authentication.</p>
+
+        <!-- Get All Priorities -->
+        <h3>Retrieve All Priorities</h3>
+        <p><strong>Endpoint:</strong> <code>/api/priorities</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all priorities.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/priorities
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "priorityId": 1,
+        "type": "Low"
+    },
+    {
+        "priorityId": 2,
+        "type": "Medium"
+    },
+    {
+        "priorityId": 3,
+        "type": "High"
+    }
+]
+        </pre>
+
+        <!-- Get Priority by ID -->
+        <h3>Retrieve Priority by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/priorities/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific priority by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/priorities/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "priorityId": 1,
+    "type": "Low"
+}
+        </pre>
+
+        <!-- Create a New Priority -->
+        <h3>Create a New Priority</h3>
+        <p><strong>Endpoint:</strong> <code>/api/priorities</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new priority level.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>PriorityRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/priorities
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "type": "Critical"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "priorityId": 4,
+    "type": "Critical"
+}
+        </pre>
+
+        <!-- Update an Existing Priority -->
+        <h3>Update an Existing Priority</h3>
+        <p><strong>Endpoint:</strong> <code>/api/priorities/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing priority level.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>PriorityRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/priorities/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "type": "Urgent"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "priorityId": 1,
+    "type": "Urgent"
+}
+        </pre>
+
+        <!-- Delete a Priority -->
+        <h3>Delete a Priority</h3>
+        <p><strong>Endpoint:</strong> <code>/api/priorities/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a priority level by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/priorities/4
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Roles -->
+    <div class="endpoint" id="roles">
+        <h2>Roles</h2>
+        <p>The role endpoints manage employee roles. These endpoints do not require authentication.</p>
+
+        <!-- Get All Roles -->
+        <h3>Retrieve All Roles</h3>
+        <p><strong>Endpoint:</strong> <code>/api/roles</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all roles.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/roles
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "roleId": 1,
+        "roleName": "Developer"
+    },
+    {
+        "roleId": 2,
+        "roleName": "Manager"
+    },
+    {
+        "roleId": 3,
+        "roleName": "Administrator"
+    }
+]
+        </pre>
+
+        <!-- Get Role by ID -->
+        <h3>Retrieve Role by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/roles/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific role by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/roles/1
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "roleId": 1,
+    "roleName": "Developer"
+}
+        </pre>
+
+        <!-- Create a New Role -->
+        <h3>Create a New Role</h3>
+        <p><strong>Endpoint:</strong> <code>/api/roles</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new role.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>RoleRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/roles
+Content-Type: application/json
+
+{
+    "roleName": "Supervisor"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "roleId": 4,
+    "roleName": "Supervisor"
+}
+        </pre>
+
+        <!-- Update an Existing Role -->
+        <h3>Update an Existing Role</h3>
+        <p><strong>Endpoint:</strong> <code>/api/roles/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing role.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>RoleRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/roles/1
+Content-Type: application/json
+
+{
+    "roleName": "Senior Manager"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "roleId": 1,
+    "roleName": "Senior Manager"
+}
+        </pre>
+
+        <!-- Delete a Role -->
+        <h3>Delete a Role</h3>
+        <p><strong>Endpoint:</strong> <code>/api/roles/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a role by its ID.</p>
+        <p><strong>Authentication:</strong> Not required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/roles/4
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Statuses -->
+    <div class="endpoint" id="statuses">
+        <h2>Statuses</h2>
+        <p>The status endpoints manage task statuses. These endpoints require authentication.</p>
+
+        <!-- Get All Statuses -->
+        <h3>Retrieve All Statuses</h3>
+        <p><strong>Endpoint:</strong> <code>/api/statuses</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves all statuses.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/statuses
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "statusId": 1,
+        "statusName": "Pending"
+    },
+    {
+        "statusId": 2,
+        "statusName": "In Progress"
+    },
+    {
+        "statusId": 3,
+        "statusName": "Completed"
+    }
+]
+        </pre>
+
+        <!-- Get Status by ID -->
+        <h3>Retrieve Status by ID</h3>
+        <p><strong>Endpoint:</strong> <code>/api/statuses/{id}</code></p>
+        <p><strong>Method:</strong> GET</p>
+        <p><strong>Description:</strong> Retrieves a specific status by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+GET http://localhost:8080/api/statuses/1
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "statusId": 1,
+    "statusName": "Pending"
+}
+        </pre>
+
+        <!-- Create a New Status -->
+        <h3>Create a New Status</h3>
+        <p><strong>Endpoint:</strong> <code>/api/statuses</code></p>
+        <p><strong>Method:</strong> POST</p>
+        <p><strong>Description:</strong> Creates a new status.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>StatusRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+POST http://localhost:8080/api/statuses
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "statusName": "Under Review"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "statusId": 4,
+    "statusName": "Under Review"
+}
+        </pre>
+
+        <!-- Update an Existing Status -->
+        <h3>Update an Existing Status</h3>
+        <p><strong>Endpoint:</strong> <code>/api/statuses/{id}</code></p>
+        <p><strong>Method:</strong> PUT</p>
+        <p><strong>Description:</strong> Updates an existing status.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Request Body:</strong> JSON representation of <code>StatusRequestDTO</code></p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+PUT http://localhost:8080/api/statuses/1
+Authorization: Bearer your_jwt_token
+Content-Type: application/json
+
+{
+    "statusName": "Under Review"
+}
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "statusId": 1,
+    "statusName": "Under Review"
+}
+        </pre>
+
+        <!-- Delete a Status -->
+        <h3>Delete a Status</h3>
+        <p><strong>Endpoint:</strong> <code>/api/statuses/{id}</code></p>
+        <p><strong>Method:</strong> DELETE</p>
+        <p><strong>Description:</strong> Deletes a status by its ID.</p>
+        <p><strong>Authentication:</strong> Required</p>
+        <p><strong>Example Request:</strong></p>
+        <pre>
+DELETE http://localhost:8080/api/statuses/4
+Authorization: Bearer your_jwt_token
+        </pre>
+        <p><strong>Example Response:</strong></p>
+        <pre>
+HTTP/1.1 204 No Content
+        </pre>
+    </div>
+
+    <!-- Employees -->
+    <!-- (Already detailed above) -->
+
+    <!-- Employee Notifications -->
+    <!-- (Already detailed above) -->
+
+    <!-- Notifications -->
+    <!-- (Already detailed above) -->
+
+    <!-- Priorities -->
+    <!-- (Already detailed above) -->
+
+    <!-- Roles -->
+    <!-- (Already detailed above) -->
+
+    <!-- Statuses -->
+    <!-- (Already detailed above) -->
+
+    <!-- Data Transfer Objects (DTOs) -->
+    <h2>Data Transfer Objects (DTOs)</h2>
+    <p>The following DTOs are used in requests and responses:</p>
+
+    <!-- AuthRequestDTO -->
+    <h3>AuthRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>username</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>User's username.</td>
+            </tr>
+            <tr>
+                <td>password</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>User's password.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- AuthResponseDTO -->
+    <h3>AuthResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>token</td>
+                <td>String</td>
+                <td>JWT token for authenticated requests.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- AvailabilityRequestDTO -->
+    <h3>AvailabilityRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>availabilityName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Name of the availability status.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- AvailabilityResponseDTO -->
+    <h3>AvailabilityResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>availabilityId</td>
+                <td>Integer</td>
+                <td>ID of the availability status.</td>
+            </tr>
+            <tr>
+                <td>availabilityName</td>
+                <td>String</td>
+                <td>Name of the availability status.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- DepartmentRequestDTO -->
+    <h3>DepartmentRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>departmentName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Name of the department.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- DepartmentResponseDTO -->
+    <h3>DepartmentResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>departmentId</td>
+                <td>Integer</td>
+                <td>ID of the department.</td>
+            </tr>
+            <tr>
+                <td>departmentName</td>
+                <td>String</td>
+                <td>Name of the department.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeNotificationRequestDTO -->
+    <h3>EmployeeNotificationRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>notificationId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the notification.</td>
+            </tr>
+            <tr>
+                <td>employeeId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the employee receiving the notification.</td>
+            </tr>
+            <tr>
+                <td>isRead</td>
+                <td>Boolean</td>
+                <td>Yes</td>
+                <td>Read status of the notification.</td>
+            </tr>
+            <tr>
+                <td>received</td>
+                <td>String</td>
+                <td>No</td>
+                <td>Date and time when the notification was received.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeNotificationResponseDTO -->
+    <h3>EmployeeNotificationResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>employeeNotificationId</td>
+                <td>Integer</td>
+                <td>ID of the employee notification.</td>
+            </tr>
+            <tr>
+                <td>isRead</td>
+                <td>Boolean</td>
+                <td>Read status of the notification.</td>
+            </tr>
+            <tr>
+                <td>received</td>
+                <td>LocalDateTime</td>
+                <td>Date and time when the notification was received.</td>
+            </tr>
+            <tr>
+                <td>notificationId</td>
+                <td>Integer</td>
+                <td>ID of the associated notification.</td>
+            </tr>
+            <tr>
+                <td>employeeId</td>
+                <td>Integer</td>
+                <td>ID of the employee receiving the notification.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeRequestDTO -->
+    <h3>EmployeeRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>username</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Employee's username.</td>
+            </tr>
+            <tr>
+                <td>firstName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Employee's first name.</td>
+            </tr>
+            <tr>
+                <td>lastName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Employee's last name.</td>
+            </tr>
+            <tr>
+                <td>password</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Employee's password.</td>
+            </tr>
+            <tr>
+                <td>departmentId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the department the employee belongs to.</td>
+            </tr>
+            <tr>
+                <td>availabilityId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the employee's availability status.</td>
+            </tr>
+            <tr>
+                <td>roleId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the employee's role.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeResponseDTO -->
+    <h3>EmployeeResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>employeeId</td>
+                <td>Integer</td>
+                <td>ID of the employee.</td>
+            </tr>
+            <tr>
+                <td>username</td>
+                <td>String</td>
+                <td>Employee's username.</td>
+            </tr>
+            <tr>
+                <td>firstName</td>
+                <td>String</td>
+                <td>Employee's first name.</td>
+            </tr>
+            <tr>
+                <td>lastName</td>
+                <td>String</td>
+                <td>Employee's last name.</td>
+            </tr>
+            <tr>
+                <td>departmentId</td>
+                <td>Integer</td>
+                <td>ID of the department the employee belongs to.</td>
+            </tr>
+            <tr>
+                <td>availabilityId</td>
+                <td>Integer</td>
+                <td>ID of the employee's availability status.</td>
+            </tr>
+            <tr>
+                <td>roleId</td>
+                <td>Integer</td>
+                <td>ID of the employee's role.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeTaskRequestDTO -->
+    <h3>EmployeeTaskRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>taskId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the task.</td>
+            </tr>
+            <tr>
+                <td>employeeId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the employee assigned to the task.</td>
+            </tr>
+            <tr>
+                <td>assignedDate</td>
+                <td>LocalDateTime</td>
+                <td>Yes</td>
+                <td>Date and time when the task was assigned (format: YYYY-MM-DDTHH:MM:SS).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- EmployeeTaskResponseDTO -->
+    <h3>EmployeeTaskResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>employeeTaskId</td>
+                <td>Integer</td>
+                <td>ID of the employee task assignment.</td>
+            </tr>
+            <tr>
+                <td>taskId</td>
+                <td>Integer</td>
+                <td>ID of the associated task.</td>
+            </tr>
+            <tr>
+                <td>employeeId</td>
+                <td>Integer</td>
+                <td>ID of the employee assigned to the task.</td>
+            </tr>
+            <tr>
+                <td>assignedDate</td>
+                <td>LocalDateTime</td>
+                <td>Date and time when the task was assigned.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- NotificationRequestDTO -->
+    <h3>NotificationRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>taskId</td>
+                <td>Integer</td>
+                <td>Yes</td>
+                <td>ID of the associated task.</td>
+            </tr>
+            <tr>
+                <td>message</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Notification message.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- NotificationResponseDTO -->
+    <h3>NotificationResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>notificationId</td>
+                <td>Integer</td>
+                <td>ID of the notification.</td>
+            </tr>
+            <tr>
+                <td>taskId</td>
+                <td>Integer</td>
+                <td>ID of the associated task.</td>
+            </tr>
+            <tr>
+                <td>message</td>
+                <td>String</td>
+                <td>Notification message.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PriorityRequestDTO -->
+    <h3>PriorityRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>type</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Type of the priority (e.g., Low, Medium, High).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PriorityResponseDTO -->
+    <h3>PriorityResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>priorityId</td>
+                <td>Integer</td>
+                <td>ID of the priority level.</td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>String</td>
+                <td>Type of the priority.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RoleRequestDTO -->
+    <h3>RoleRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>roleName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Name of the role.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- RoleResponseDTO -->
+    <h3>RoleResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>roleId</td>
+                <td>Integer</td>
+                <td>ID of the role.</td>
+            </tr>
+            <tr>
+                <td>roleName</td>
+                <td>String</td>
+                <td>Name of the role.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- StatusRequestDTO -->
+    <h3>StatusRequestDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Required</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>statusName</td>
+                <td>String</td>
+                <td>Yes</td>
+                <td>Name of the status.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- StatusResponseDTO -->
+    <h3>StatusResponseDTO</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>statusId</td>
+                <td>Integer</td>
+                <td>ID of the status.</td>
+            </tr>
+            <tr>
+                <td>statusName</td>
+                <td>String</td>
+                <td>Name of the status.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Notes -->
+    <h2>Notes</h2>
+    <ul>
+        <li>All date and time fields should be in the format <code>YYYY-MM-DDTHH:MM:SS</code>.</li>
+        <li>Ensure the <code>Content-Type</code> header is set to <code>application/json</code> for POST and PUT requests.</li>
+        <li>Use tools like Postman to test the API endpoints.</li>
+        <li>For authentication, replace <code>your_jwt_token</code> with the actual token received from the login endpoint.</li>
+    </ul>
+
+    <!-- Authentication Notes -->
+    <h2>Authentication Notes</h2>
+    <p>Some endpoints require authentication, while others do not. Refer to the following guidelines:</p>
+    <ul>
+        <li><strong>Public Endpoints (No Authentication Required):</strong></li>
+        <ul>
+            <li><code>/api/auth/**</code></li>
+            <li><code>/api/availabilities/**</code></li>
+            <li><code>/api/departments/**</code></li>
+            <li><code>/api/roles/**</code></li>
+            <li><code>/docs</code> and <code>/apidocs.html</code></li>
+        </ul>
+        <li><strong>Protected Endpoints (Authentication Required):</strong></li>
+        <ul>
+            <li>All other endpoints not listed as public.</li>
+        </ul>
+    </ul>
+    <p>For protected endpoints, include the JWT token in the <code>Authorization</code> header:</p>
+    <pre>
+Authorization: Bearer your_jwt_token
+    </pre>
+
+   
+</body>
+</html>

@@ -148,14 +148,6 @@ CREATE TABLE IF NOT EXISTS `TaskManager`.`employeetask` (
 ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `TaskManager`.`COMMENT`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `TaskManager`.`comment` (
-  `COMMENT_ID` INT NOT NULL AUTO_INCREMENT,
-  `MESSAGE` VARCHAR(500) NOT NULL,
-  PRIMARY KEY (`COMMENT_ID`))
-ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -175,23 +167,17 @@ CREATE TABLE IF NOT EXISTS `TaskManager`.`taskupdate` (
   `TASKUPDATE_ID` INT NOT NULL AUTO_INCREMENT,
   `UPDATE_DATE` DATETIME NOT NULL,
   `TASK_ID` INT NOT NULL,
-  `COMMENT_ID` INT NULL,
+  `COMMENT` VARCHAR(1000),
   `STATUS_ID` INT NOT NULL,
   `EMPLOYEE_ID` INT NOT NULL,
   PRIMARY KEY (`TASKUPDATE_ID`),
   INDEX `fk_TASKUPDATE_TASK1_idx` (`TASK_ID` ASC) VISIBLE,
-  INDEX `fk_TASKUPDATE_COMMENT1_idx` (`COMMENT_ID` ASC) VISIBLE,
   INDEX `fk_TASKUPDATE_STATUS1_idx` (`STATUS_ID` ASC) VISIBLE,
   INDEX `fk_TASKUPDATE_EMPLOYEE1_idx` (`EMPLOYEE_ID` ASC) VISIBLE,
   CONSTRAINT `fk_TASKUPDATE_TASK1`
     FOREIGN KEY (`TASK_ID`)
     REFERENCES `TaskManager`.`TASK` (`TASK_ID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_TASKUPDATE_COMMENT1`
-    FOREIGN KEY (`COMMENT_ID`)
-    REFERENCES `TaskManager`.`COMMENT` (`COMMENT_ID`)
-    ON DELETE SET NULL
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_TASKUPDATE_STATUS1`
     FOREIGN KEY (`STATUS_ID`)
@@ -291,6 +277,11 @@ INSERT INTO `PRIORITY` (`PRIORITY_ID`, `TYPE`) VALUES
 (2, 'Medium'),
 (3, 'High');
 
+-- _____________________________________________________________________
+-- ______________________________TEST_DATA______________________________
+-- _____________________________________________________________________
+
+
 -- Populate the EMPLOYEE table
 INSERT INTO `EMPLOYEE` (`USERNAME`, `FIRST_NAME`, `LAST_NAME`, `PASSWORD`, `DEPARTMENT_ID`, `AVAILABILITY_ID`, `ROLE_ID`) VALUES
 ('JohnDoe1', 'John', 'Doe', '$2b$12$e0NRj6w8O8FZs1pV5qSOUu77IXzJ6Oe0zDq6N3rWq3BvK0Fdfb3mi', 1, 1, 1),
@@ -298,6 +289,25 @@ INSERT INTO `EMPLOYEE` (`USERNAME`, `FIRST_NAME`, `LAST_NAME`, `PASSWORD`, `DEPA
 ( 'Alice','Alice', 'Johnson', '$2b$12$h3K5L7m9N1P3R5tV7zA9Bu88LXzN9Qk6sYp0R1wZs4DhL5V6rH1Nj', 3, 2, 2),
 ( 'Bob','Bob', 'Brown', '$2b$12$n4Q6S8u0V2W4X6yZ8bC0Cv99NYzO0Rl7tZq1S2xXt5EgM0W1vJ2Op', 1, 1, 1),
 ('Charlie' ,'Charlie', 'Davis', '$2b$12$k5L7N9p1R3T5V7xA9D0Eu00OZzP1Sn8uYq2T3wXu6FhN1Y2sK3Qr', 4, 3, 2);
+-- Populate the TASK table
+INSERT INTO `TASK` (`TASK_NAME`, `DESCRIPTION`, `DEADLINE`, `CREATION_DATE`, `ARCHIVED`, `DEPENDENCY_TASK_ID`, `CREATED_BY`, `PRIORITY_ID`, `ADDRESS`) VALUES
+('Design Database Schema', 'Create the initial database schema for the project.', '2023-12-31 23:59:59', NOW(), 0, NULL, 1, 2, '123 Main St, City, Country'); -- TASK_ID = 1
+
+-- Populate the EMPLOYEETASK table
+INSERT INTO `EMPLOYEETASK` (`ASSIGNED_DATE`, `TASK_ID`, `EMPLOYEE_ID`) VALUES
+(NOW(), 1, 2); -- EMPLOYEETASK_ID = 1
+
+-- Populate the TASKUPDATE table
+INSERT INTO `TASKUPDATE` (`UPDATE_DATE`, `TASK_ID`, `COMMENT`, `STATUS_ID`, `EMPLOYEE_ID`) VALUES
+(NOW(), 1, 'Started working on the database schema.', 1, 2); -- TASKUPDATE_ID = 1
+
+-- Populate the NOTIFICATION table
+INSERT INTO `NOTIFICATION` (`MESSAGE`, `TASK_ID`) VALUES
+('Task "Design Database Schema" has been assigned to you.', 1); -- NOTIFICATION_ID = 1
+
+-- Populate the EMPLOYEENOTIFICATION table
+INSERT INTO `EMPLOYEENOTIFICATION` (`ISREAD`, `RECEIVED`, `NOTIFICATION_ID`, `EMPLOYEE_ID`) VALUES
+(FALSE, NOW(), 1, 2); -- EMPLOYEENOTIFICATION_ID = 1
 
 -- Verify DEPARTMENT entries
 SELECT * FROM `department`;
@@ -317,4 +327,17 @@ SELECT * FROM `priority`;
 -- Verify EMPLOYEE entries
 SELECT * FROM `employee`;
 
+-- Verify TASK entries
+SELECT * FROM `task`;
 
+-- Verify EMPLOYEETASK entries
+SELECT * FROM `employeetask`;
+
+-- Verify TASKUPDATE entries
+SELECT * FROM `taskupdate`;
+
+-- Verify NOTIFICATION entries
+SELECT * FROM `notification`;
+
+-- Verify EMPLOYEENOTIFICATION entries
+SELECT * FROM `employeenotification`;

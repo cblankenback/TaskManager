@@ -9,7 +9,8 @@ public class TaskUpdateRequestDTO {
     @NotNull(message = "Task ID is required")
     private Integer taskId;
 
-    private Integer commentId; // Optional
+ 
+    private String comment; // Optional
 
     @NotNull(message = "Status ID is required")
     private Integer statusId;

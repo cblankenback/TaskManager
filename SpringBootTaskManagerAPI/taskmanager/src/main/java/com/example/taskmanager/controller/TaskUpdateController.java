@@ -46,7 +46,7 @@ public class TaskUpdateController {
     // Update an existing task update
     @PutMapping("/{id}")
     public ResponseEntity<TaskUpdateResponseDTO> updateTaskUpdate(@PathVariable Integer id,
-                                                                    @Valid @RequestBody TaskUpdateRequestDTO requestDTO) {
+                                                                  @Valid @RequestBody TaskUpdateRequestDTO requestDTO) {
         TaskUpdateResponseDTO updatedTaskUpdate = taskUpdateService.updateTaskUpdate(id, requestDTO);
         return new ResponseEntity<>(updatedTaskUpdate, HttpStatus.OK);
     }

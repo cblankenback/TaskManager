@@ -58,7 +58,8 @@ public class SecurityConfig {
             // Configure URL authorization
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll() 
-                .requestMatchers("/api/auth/**").permitAll() // Allow authentication endpoints
+                .requestMatchers("/docs").permitAll() // Allow authentication endpoints
+                .requestMatchers("/apidocs.html").permitAll() // Allow authentication endpoints
                 .requestMatchers("/api/departments/**").permitAll() // Allow public access
                 .requestMatchers("/api/availabilities/**").permitAll() // Allow public access
                 .requestMatchers("/api/roles/**").permitAll() // Allow public access// Allow authentication endpoints

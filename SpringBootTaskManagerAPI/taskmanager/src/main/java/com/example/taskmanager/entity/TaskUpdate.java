@@ -30,10 +30,8 @@ public class TaskUpdate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Task task;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "COMMENT_ID")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Comment comment;
+    @Column(name = "COMMENT", nullable = true)
+    private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "STATUS_ID", nullable = false)

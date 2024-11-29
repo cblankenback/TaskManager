@@ -10,7 +10,6 @@ import org.mapstruct.Mapping;
 public interface TaskUpdateMapper {
 
     @Mapping(source = "task.taskId", target = "taskId")
-    @Mapping(source = "comment.commentId", target = "commentId")
     @Mapping(source = "status.statusId", target = "statusId")
     @Mapping(source = "employee.employeeId", target = "employeeId")
     TaskUpdateResponseDTO toDTO(TaskUpdate taskUpdate);
