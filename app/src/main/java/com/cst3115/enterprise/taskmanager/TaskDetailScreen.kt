@@ -37,6 +37,9 @@ fun TaskDetailScreen(
     LaunchedEffect(Unit) {
         userViewModel.loadCurrentUser()
         viewModel.loadStatuses()
+        // If you need to load task details, ensure you have a taskId from somewhere, e.g. from NavBackStackEntry
+        // val taskId = ... from navController arguments
+        // viewModel.loadTaskDetails(taskId)
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -44,8 +47,6 @@ fun TaskDetailScreen(
         onResult = { isGranted ->
             if (isGranted) {
                 locationViewModel.fetchLocation()
-            } else {
-                // Handle permission denial if needed
             }
         }
     )
@@ -83,6 +84,7 @@ fun TaskDetailScreen(
             )
         },
         floatingActionButton = {
+            // Only show FAB if task is not null
             if (task != null) {
                 FloatingActionButton(onClick = { showCreateUpdateDialog = true }) {
                     Text("+")
@@ -106,7 +108,10 @@ fun TaskDetailScreen(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                    task != null -> {
+                    task != null -> task?.let { currentTask ->
+                        // Filter updates by current task ID
+                        val filteredUpdates = updates.filter { it.taskId == currentTask.taskId }
+
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -114,16 +119,16 @@ fun TaskDetailScreen(
                             verticalArrangement = Arrangement.Top
                         ) {
                             // Display full Task details
-                            Text("Task ID: ${task!!.taskId}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Task Name: ${task!!.taskName}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Description: ${task!!.description}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Deadline: ${task!!.deadline}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Creation Date: ${task!!.creationDate}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Archived: ${task!!.archived}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Dependency Task ID: ${task!!.dependencyTaskId ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Created By: ${viewModel.getEmployeeName(task!!.createdById)}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Priority: ${viewModel.getPriorityType(task!!.priorityId)}", style = MaterialTheme.typography.bodyLarge)
-                            Text("Address: ${task!!.address}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Task ID: ${currentTask.taskId}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Task Name: ${currentTask.taskName}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Description: ${currentTask.description}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Deadline: ${currentTask.deadline}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Creation Date: ${currentTask.creationDate}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Archived: ${currentTask.archived}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Dependency Task ID: ${currentTask.dependencyTaskId ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Created By: ${viewModel.getEmployeeName(currentTask.createdById)}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Priority: ${viewModel.getPriorityType(currentTask.priorityId)}", style = MaterialTheme.typography.bodyLarge)
+                            Text("Address: ${currentTask.address}", style = MaterialTheme.typography.bodyLarge)
 
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -141,7 +146,7 @@ fun TaskDetailScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                items(updates) { update ->
+                                items(filteredUpdates) { update ->
                                     TaskUpdateItem(update, viewModel)
                                 }
                             }
@@ -153,25 +158,27 @@ fun TaskDetailScreen(
     )
 
     if (showCreateUpdateDialog && task != null) {
-        CreateUpdateDialog(
-            taskId = task!!.taskId,
-            statuses = statuses,
-            employeeId = employeeId,
-            onDismiss = { showCreateUpdateDialog = false },
-            onCreateUpdate = { comment, statusId, empId ->
-                viewModel.createTaskUpdate(
-                    taskId = task!!.taskId,
-                    comment = comment,
-                    statusId = statusId,
-                    employeeId = empId,
-                    onSuccess = { showCreateUpdateDialog = false },
-                    onError = {
-                        // Show a Snackbar or Toast
-                        showCreateUpdateDialog = false
-                    }
-                )
-            }
-        )
+        task?.let { currentTask ->
+            CreateUpdateDialog(
+                taskId = currentTask.taskId,
+                statuses = statuses,
+                employeeId = employeeId,
+                onDismiss = { showCreateUpdateDialog = false },
+                onCreateUpdate = { comment, statusId, empId ->
+                    viewModel.createTaskUpdate(
+                        taskId = currentTask.taskId,
+                        comment = comment,
+                        statusId = statusId,
+                        employeeId = empId,
+                        onSuccess = { showCreateUpdateDialog = false },
+                        onError = {
+                            // Show a Snackbar or Toast
+                            showCreateUpdateDialog = false
+                        }
+                    )
+                }
+            )
+        }
     }
 }
 
@@ -191,6 +198,7 @@ fun TaskUpdateItem(update: TaskUpdate, viewModel: TaskDetailViewModel) {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateUpdateDialog(
@@ -228,9 +236,7 @@ fun CreateUpdateDialog(
                         onValueChange = {},
                         label = { Text("Status") },
                         readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -259,10 +265,10 @@ fun CreateUpdateDialog(
             TextButton(onClick = {
                 val chosenStatusId = selectedStatus?.statusId
                 val chosenEmployeeId = employeeId
-                if (chosenStatusId != null && chosenEmployeeId != null) {
+                if (chosenStatusId != null && chosenEmployeeId != null && comment.isNotBlank()) {
                     onCreateUpdate(comment, chosenStatusId, chosenEmployeeId)
                 } else {
-                    // Show error or require user to select status / have employee ID
+                    // Optionally show error that fields must be selected
                 }
             }) {
                 Text("Save")

@@ -1,5 +1,6 @@
 package com.cst3115.enterprise.taskmanager
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -13,18 +14,26 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.cst3115.enterprise.taskmanager.ui.viewmodel.LoginViewModel
 import com.cst3115.enterprise.taskmanager.ui.theme.TaskManagerTheme
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    // Load saved username from SharedPreferences
+    val savedUsername = remember {
+        val prefs = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        prefs.getString("saved_username", "") ?: ""
+    }
+
     // Form Fields
-    var userId by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf(savedUsername) }
     var password by remember { mutableStateOf("") }
 
     // UI State
     val isLoading = viewModel.isLoading.collectAsState().value
     val loginError = viewModel.loginError.collectAsState().value
 
-    // UI Layout with Padding
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +44,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // User ID Field
+        // User ID Field (pre-filled with savedUsername if available)
         OutlinedTextField(
             value = userId,
             onValueChange = { userId = it },
@@ -81,6 +90,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
 
                 // Perform Login
                 viewModel.login(userId, password) {
+                    // On success, save username to SharedPreferences
+                    val prefs = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+                    prefs.edit().putString("saved_username", userId).apply()
+
                     // Navigate to Main Screen upon successful login
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
