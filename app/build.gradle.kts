@@ -88,4 +88,9 @@ dependencies {
     implementation ("androidx.datastore:datastore-preferences-core:1.0.0")
 
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1") // For annotation processing
+    implementation ("androidx.room:room-ktx:2.6.1") // Optional - Kotlin extensions
 }
