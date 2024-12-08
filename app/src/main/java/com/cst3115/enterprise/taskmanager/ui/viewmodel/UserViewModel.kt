@@ -147,7 +147,30 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                val response = apiService.getCurrentUser() // Removed the "Bearer $token" argument
+                val response = apiService.getCurrentUser()
+                val userBody = response.body()
+                if (response.isSuccessful && userBody != null) {
+                    _userDetails.value = userBody
+                    Log.d("UserViewModel", "User details fetched successfully: $userBody")
+                } else {
+                    val msg = "Failed to fetch user details: ${response.message()}"
+                    _errorMessage.value = msg
+                    Log.e("UserViewModel", "Error fetching user details: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "An error occurred: ${e.localizedMessage}"
+                Log.e("UserViewModel", "Exception fetching user details", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+    fun loadCurrentUser() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            try {
+                val response = apiService.getCurrentUser()
                 if (response.isSuccessful) {
                     _userDetails.value = response.body()
                     Log.d("UserViewModel", "User details fetched successfully: ${response.body()}")
@@ -163,6 +186,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
 
     /**
      * Refreshes the user's details by fetching them again from the backend.

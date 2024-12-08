@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.cst3115.enterprise.taskmanager"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -50,9 +50,10 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    //implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,7 +62,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
+   // implementation (libs.material3)
+    // If not included yet
+         implementation (libs.androidx.material)
+   // implementation (libs.androidx.runtime)
+    implementation ("androidx.compose.material3:material3:1.4.0-alpha04")
 
     // Retrofit for network calls
   //  implementation (libs.retrofit)
@@ -77,8 +82,10 @@ dependencies {
 
     // Jetpack Security for EncryptedSharedPreferences
     implementation ("androidx.security:security-crypto:1.1.0-alpha05")
-
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
     // Optional: For DataStore with Encryption (Alternative to EncryptedSharedPreferences)
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
     implementation ("androidx.datastore:datastore-preferences-core:1.0.0")
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }
