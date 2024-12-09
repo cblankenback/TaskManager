@@ -132,14 +132,17 @@ or
 
 ## Usage
 
-1. **Create an Account:**
+1. **API DOCS:**
+   - go to localhost:8080/doc when SpringBoot is running to see the API documentation
+
+2. **Create an Account:**
    - Open the Android app.
    - Navigate to the registration screen and create a new account using your email and a secure password.
 
-2. **Log In:**
+3. **Log In:**
    - Use your credentials to log in to the app.
 
-3. **Manage Tasks:**
+4. **Manage Tasks:**
    - Add new tasks by providing necessary details.
    - View your list of tasks.
    - Update or delete tasks as needed.
